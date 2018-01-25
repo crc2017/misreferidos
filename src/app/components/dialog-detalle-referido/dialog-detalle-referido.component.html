@@ -6,11 +6,19 @@
         <h6 class="text-center"><strong>Detalle referido</strong></h6>
     </div>
     <div class="col-2">
-        <a (click)="editarCamposParticular()" *ngIf="data.referido.tipo == TIPO_PARTICULAR && isDisabledCamposParticular"><i class="icono text-danger icon-edit"></i></a>
-        <a (click)="editarCamposPyme()" *ngIf="data.referido.tipo == TIPO_PYME && isDisabledCamposPyme"><i class="icono text-danger icon-edit"></i></a>
+        <a (click)="editarCamposParticular()" *ngIf="data.referido.tipo == TIPO_PARTICULAR && isDisabledCamposParticular && ! isParticular"><i class="icono text-danger icon-edit"></i></a>
+        <a (click)="editarCamposPyme()" *ngIf="data.referido.tipo == TIPO_PYME && isDisabledCamposPyme && ! isPyme"><i class="icono text-danger icon-edit"></i></a>
 
-        <a (click)="guardaReferidoParticular()" *ngIf="data.referido.tipo == TIPO_PARTICULAR && ! isDisabledCamposParticular"><i class="icono text-danger icon-validation-2"></i></a>
-        <a (click)="guardaReferidoPyme()" *ngIf="data.referido.tipo == TIPO_PYME && ! isDisabledCamposPyme"><i class="icono text-danger icon-validation-2"></i></a>
+        <a (click)="guardaReferidoParticular()" *ngIf="data.referido.tipo == TIPO_PARTICULAR && ! isDisabledCamposParticular && ! isParticular"><i class="icono text-danger icon-validation-2"></i></a>
+        <a (click)="guardaReferidoPyme()" *ngIf="data.referido.tipo == TIPO_PYME && ! isDisabledCamposPyme && ! isPyme"><i class="icono text-danger icon-validation-2"></i></a>
+
+        <mat-progress-spinner
+            *ngIf="isParticular || isPyme"
+            [diameter]="35"
+            color="warn"
+            mode="indeterminate"
+            value="50">
+        </mat-progress-spinner>
     </div>
 </div>
 <mat-dialog-content>
@@ -40,27 +48,35 @@
     </div>
 
     <div id="editar-particular-container" *ngIf="data.referido.tipo == TIPO_PARTICULAR">
-        <form [formGroup]="formaParticular" class="captura-referido-form">
+        <form [formGroup]="formaParticular" class="captura-referido-form font-detallereferido-input">
             <mat-form-field class="componente-captura-referido">
-                <input matInput placeholder="Nombre" type="text" formControlName="nombre">
+                <input matInput placeholder="Nombre" type="text"
+                 class="font-detallereferido-input" 
+                 formControlName="nombre">
                 <mat-error *ngIf="formaParticular.get('nombre').errors?.required">
                     Nombre <strong>requerido</strong>
                 </mat-error>
             </mat-form-field>
             <mat-form-field class="componente-captura-referido">
-                <input matInput placeholder="Apellido paterno" type="text" formControlName="appat">
+                <input matInput placeholder="Apellido paterno" type="text"
+                 class="font-detallereferido-input"
+                  formControlName="appat">
                 <mat-error *ngIf="formaParticular.get('appat').errors?.required">
                     Apellido <strong>requerido</strong>
                 </mat-error>
             </mat-form-field>
             <mat-form-field class="componente-captura-referido">
-                <input matInput placeholder="Apellido materno" type="text" formControlName="apmat">
+                <input matInput placeholder="Apellido materno" type="text"
+                 class="font-detallereferido-input"
+                  formControlName="apmat">
                 <mat-error *ngIf="formaParticular.get('apmat').errors?.required">
                     Apellido <strong>requerido</strong>
                 </mat-error>
             </mat-form-field>
             <mat-form-field class="componente-captura-referido">
-                <input matInput placeholder="Fecha de nacimiento" type="text" formControlName="fechaNacimiento">
+                <input matInput placeholder="Fecha de nacimiento" type="text"
+                 class="font-detallereferido-input"
+                 formControlName="fechaNacimiento">
                 <mat-error *ngIf="formaParticular.get('fechaNacimiento').errors?.required">
                     Fecha de nacimiento <strong>requerida</strong>
                 </mat-error>
@@ -69,7 +85,9 @@
                 </mat-error>
             </mat-form-field>
             <mat-form-field class="componente-captura-referido">
-                <input matInput placeholder="Correo" type="email" formControlName="correo">
+                <input matInput placeholder="Correo" type="email"
+                 class="font-detallereferido-input"
+                formControlName="correo">
                 <mat-error *ngIf="formaParticular.get('correo').errors?.required">
                     Correo <strong>requerido</strong>
                 </mat-error>
@@ -78,7 +96,9 @@
                 </mat-error>
             </mat-form-field>
             <mat-form-field class="componente-captura-referido">
-                <input matInput placeholder="Teléfono" type="text" formControlName="telefono">                            
+                <input matInput placeholder="Teléfono" type="text"
+                 class="font-detallereferido-input"
+                 formControlName="telefono">                            
                 <mat-error *ngIf="formaParticular.get('telefono').errors?.required">
                     Teléfono <strong>requerido</strong>
                 </mat-error>
@@ -87,39 +107,79 @@
                 </mat-error>
             </mat-form-field>
             <mat-form-field class="componente-captura-referido">
-                <input matInput placeholder="RFC" type="text" formControlName="rfc">
+                <input matInput placeholder="RFC" type="text"
+                 class="font-detallereferido-input"
+                 formControlName="rfc">
+                <mat-error *ngIf="formaParticular.get('rfc').errors?.pattern">
+                    RFC <strong>no valido</strong>
+                </mat-error>
             </mat-form-field>
-            <input type="hidden" formControlName="id">        
+            <mat-form-field class="componente-captura-referido">
+                <mat-select [disabled]="isDisabledCamposParticular" placeholder="Region" (selectionChange)="getZonas(regionSeleccionadaParticular.value)" #regionSeleccionadaParticular value="{{data.referido.region}}">
+                    <mat-option *ngFor="let region of regionesParticular" [value]="region.clave">
+                    {{region.descripcion}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="componente-captura-referido">
+                <mat-select [disabled]="isDisabledCamposParticular" placeholder="Zona" (selectionChange)="getSucursales(zonaSeleccionadaParticular.value)" #zonaSeleccionadaParticular value="{{data.referido.zona}}">
+                    <mat-option *ngFor="let zona of zonasParticular" [value]="zona.clave">
+                    {{zona.descripcion}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="componente-captura-referido">
+                <mat-select [disabled]="isDisabledCamposParticular" placeholder="* Sucursal" (selectionChange)="verDetalleSucursal(sucursalParticular.value)" #sucursalParticular value="{{data.referido.sucursal}}">
+                    <mat-option *ngFor="let sucursal of sucursalesParticular" [value]="sucursal.clave">
+                    {{sucursal.descripcion}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="formaParticular.get('idSucursal').errors?.required">
+                    Sucursal <strong>requerida</strong>
+                </mat-error>                
+            </mat-form-field>
+            <input type="hidden" formControlName="idSucursal">
+            <input type="hidden" formControlName="id">
         </form>            
     </div>
     <div id="editar-pyme-container" *ngIf="data.referido.tipo == TIPO_PYME">
-        <form [formGroup]="formaPyme" class="captura-referido-form">
+        <form [formGroup]="formaPyme" class="captura-referido-form font-detallereferido-input">
             <mat-form-field class="componente-captura-referido">
-                <input matInput placeholder="Nombre" type="text" formControlName="nombre">
+                <input matInput placeholder="Nombre" type="text"
+                 class="font-detallereferido-input"
+                 formControlName="nombre">
                 <mat-error *ngIf="formaPyme.get('nombre').errors?.required">
                     Nombre <strong>requerido</strong>
                 </mat-error>
             </mat-form-field>
             <mat-form-field class="componente-captura-referido">
-                <input matInput placeholder="Apellido paterno" type="text" formControlName="appat">
+                <input matInput placeholder="Apellido paterno" type="text"
+                 class="font-detallereferido-input"
+                 formControlName="appat">
                 <mat-error *ngIf="formaPyme.get('appat').errors?.required">
                     Apellido <strong>requerido</strong>
                 </mat-error>
             </mat-form-field>
             <mat-form-field class="componente-captura-referido">
-                <input matInput placeholder="Apellido materno" type="text" formControlName="apmat">
+                <input matInput placeholder="Apellido materno" type="text"
+                 class="font-detallereferido-input"
+                 formControlName="apmat">
                 <mat-error *ngIf="formaPyme.get('apmat').errors?.required">
                     Apellido <strong>requerido</strong>
                 </mat-error>
             </mat-form-field>
             <mat-form-field class="componente-captura-referido">
-                <input matInput placeholder="Razón Social" type="text" formControlName="razonSocial">                            
+                <input matInput placeholder="Razón Social" type="text"
+                 class="font-detallereferido-input"
+                 formControlName="razonSocial">                            
                 <mat-error *ngIf="formaPyme.get('razonSocial').errors?.required">
                     Razón Social <strong>requerido</strong>
                 </mat-error>
             </mat-form-field>
             <mat-form-field class="componente-captura-referido">
-                <input matInput placeholder="Ventas anuales" type="text" formControlName="ventasAnuales">
+                <input matInput placeholder="Ventas anuales" type="text"
+                 class="font-detallereferido-input"
+                formControlName="ventasAnuales">
                 <mat-error *ngIf="formaPyme.get('ventasAnuales').errors?.required">
                     Ventas anuales <strong>requeridas</strong>
                 </mat-error>
@@ -128,7 +188,9 @@
                 </mat-error>
             </mat-form-field>
             <mat-form-field class="componente-captura-referido">
-                <input matInput placeholder="Teléfono" type="email" formControlName="telefono">                            
+                <input matInput placeholder="Teléfono" type="email"
+                 class="font-detallereferido-input"
+                formControlName="telefono">                            
                 <mat-error *ngIf="formaPyme.get('telefono').errors?.required">
                     Teléfono <strong>requerido</strong>
                 </mat-error>
@@ -137,7 +199,9 @@
                 </mat-error>
             </mat-form-field>
             <mat-form-field class="componente-captura-referido">
-                <input matInput placeholder="Correo" type="text" formControlName="correo">
+                <input matInput placeholder="Correo" type="text"
+                 class="font-detallereferido-input"
+                 formControlName="correo">
                 <mat-error *ngIf="formaPyme.get('correo').errors?.pattern">
                     Correo no valido
                 </mat-error>
@@ -146,8 +210,38 @@
                 </mat-error>
             </mat-form-field>
             <mat-form-field class="componente-captura-referido">
-                <input matInput placeholder="RFC" type="text" formControlName="rfc">
+                <input matInput placeholder="RFC" type="text"
+                 class="font-detallereferido-input"
+                formControlName="rfc">
+                <mat-error *ngIf="formaPyme.get('rfc').errors?.pattern">
+                    RFC <strong>no valido</strong>
+                </mat-error>
             </mat-form-field>
+            <mat-form-field class="componente-captura-referido">
+                <mat-select [disabled]="isDisabledCamposPyme" placeholder="Region" (selectionChange)="getZonas(regionSeleccionadaPyme.value)" #regionSeleccionadaPyme value="{{data.referido.region}}">
+                    <mat-option *ngFor="let region of regionesPyme" [value]="region.clave">
+                    {{region.descripcion}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="componente-captura-referido">
+                <mat-select [disabled]="isDisabledCamposPyme" placeholder="Zona" (selectionChange)="getSucursales(zonaSeleccionadaPyme.value)" #zonaSeleccionadaPyme value="{{data.referido.zona}}">
+                    <mat-option *ngFor="let zona of zonasPyme" [value]="zona.clave">
+                    {{zona.descripcion}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="componente-captura-referido">
+                <mat-select [disabled]="isDisabledCamposPyme" placeholder="* Sucursal" (selectionChange)="verDetalleSucursal(sucursalPyme.value)" #sucursalPyme value="{{data.referido.sucursal}}">
+                    <mat-option *ngFor="let sucursal of sucursalesPyme" [value]="sucursal.clave">
+                    {{sucursal.descripcion}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="formaPyme.get('idSucursal').errors?.required">
+                    Sucursal <strong>requerida</strong>
+                </mat-error>
+            </mat-form-field>
+            <input type="hidden" formControlName="idSucursal">
             <input type="hidden" formControlName="id">        
         </form>            
     </div>

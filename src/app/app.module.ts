@@ -14,7 +14,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatExpansionModule } from '@angular/material/expansion';
+import { AgmCoreModule } from '@agm/core';
+
 //Rutas
 import { APP_ROUTING }  from './app.routes'
 
@@ -25,20 +26,17 @@ import { LoginComponent } from './components/login/login.component';
 import { InicioComponent } from './components/inicio/inicio.component';
 import { DialogNuevoReferidoComponent } from './components/dialog-nuevo-referido/dialog-nuevo-referido.component';
 import { MisReferidosComponent } from './components/mis-referidos/mis-referidos.component';
-import { ConfirmacionComponent } from './components/confirmacion/confirmacion.component';
 import { MiProgresoComponent } from './components/mi-progreso/mi-progreso.component';
 import { DialogDetalleReferidoComponent } from './components/dialog-detalle-referido/dialog-detalle-referido.component';
 import { MatSelectModule } from '@angular/material/select';
 import { DialogBasesComponent } from './components/dialog-bases/dialog-bases.component';
 import { DialogDetallePromocionComponent } from './components/dialog-detalle-promocion/dialog-detalle-promocion.component';
 import { DialogDetalleSucursalComponent } from './components/dialog-detalle-sucursal/dialog-detalle-sucursal.component';
-import { TogleButtonComponent } from './components/togle-button/togle-button.component';
+
 //Referidos Services
 import { ReferidosService } from './services/referidos/referidos.service';
 import { SesionService } from './services/referidos/sesion.service';
 import { AutenticacionGuardService } from './services/referidos/autenticacion-guard.service';
-import { DialogPremiosComponent } from './components/dialog-premios/dialog-premios.component';
-import { HeaderExpandedComponent } from './components/header-expanded/header-expanded.component';
 
 @NgModule({
   declarations: [
@@ -48,15 +46,11 @@ import { HeaderExpandedComponent } from './components/header-expanded/header-exp
     InicioComponent,
     DialogNuevoReferidoComponent,
     MisReferidosComponent,
-    ConfirmacionComponent,
     MiProgresoComponent,
     DialogDetalleReferidoComponent,
     DialogBasesComponent,
     DialogDetallePromocionComponent,
-    DialogDetalleSucursalComponent,
-    DialogPremiosComponent,
-    TogleButtonComponent,
-    HeaderExpandedComponent
+    DialogDetalleSucursalComponent
   ],
   imports: [
     BrowserModule,
@@ -76,7 +70,9 @@ import { HeaderExpandedComponent } from './components/header-expanded/header-exp
     MatSelectModule,
     MatSnackBarModule,
     MatButtonToggleModule,
-    MatExpansionModule
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyAZmhdizMeixXQbmZu1qySmMCNh3hxZlhg'
+    })
   ],
   providers: [ 
                ReferidosService,
